@@ -1,4 +1,3 @@
-DEVELOPER INSTRUCTIONS:
 Simply.com module for Caddy
 ===========================
 
