@@ -32,23 +32,24 @@ func (p *Provider) Provision(ctx caddy.Context) error {
 	return nil
 }
 
-// TODO: This is just an example. Update accordingly.
 // UnmarshalCaddyfile sets up the DNS provider from Caddyfile tokens. Syntax:
 //
-//	providername [<api_token>] {
-//	    api_token <api_token>
+//	simplydotcom [<api_key>] {
+//	    api_key <api_key>
 //	}
 //
-// **THIS IS JUST AN EXAMPLE AND NEEDS TO BE CUSTOMIZED.**
+// The older form with an account name before the API key is still accepted,
+// but the account name is no longer needed.
 func (p *Provider) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 	for d.Next() {
-		if d.NextArg() {
-			p.Provider.AccountName = d.Val()
-		}
-		if d.NextArg() {
-			p.Provider.APIKey = d.Val()
-		}
-		if d.NextArg() {
+		switch args := d.RemainingArgs(); len(args) {
+		case 0:
+		case 1:
+			p.Provider.APIKey = args[0]
+		case 2:
+			p.Provider.AccountName = args[0]
+			p.Provider.APIKey = args[1]
+		default:
 			return d.ArgErr()
 		}
 		for nesting := d.Nesting(); d.NextBlock(nesting); {
@@ -65,7 +66,7 @@ func (p *Provider) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 				}
 
 			case "account_name":
-				if p.Provider.APIKey != "" {
+				if p.Provider.AccountName != "" {
 					return d.Err("Account name already set")
 				}
 				if d.NextArg() {
@@ -102,10 +103,7 @@ func (p *Provider) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 			}
 		}
 	}
-	if p.Provider.AccountName == "" {
-		return d.Err("missing Account name")
-	}
-	if p.Provider.AccountName == "" {
+	if p.Provider.APIKey == "" {
 		return d.Err("missing API key")
 	}
 	return nil
