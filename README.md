@@ -20,8 +20,7 @@ To use this module for the ACME DNS challenge, [configure the ACME issuer in you
 		"dns": {
 			"provider": {
 				"name": "simplydotcom",
-				"account_name": "S123456",
-				"api_key": "YourSecretKey"				
+				"api_key": "YourSecretKey"
 			}
 		}
 	}
@@ -34,7 +33,6 @@ or with the Caddyfile:
 # globally
 {
 	acme_dns simplydotcom {
-		account_name "S123456"
 		api_key "YourSecretKey"
 	}
 }
@@ -45,7 +43,6 @@ or with the Caddyfile:
 secure.example.com {
 	tls {
 		dns simplydotcom {
-			account_name "S123456"
 			api_key "YourSecretKey"
 		}
 	}
@@ -54,7 +51,7 @@ secure.example.com {
 # reusable import
 (dnschallenge) {
 	tls {
-		dns simplydotcom <account_name> <api_key>		
+		dns simplydotcom <api_key>
 	}
 }
 
@@ -63,3 +60,5 @@ example.com {
 	import dnschallenge
 }
 ```
+
+The API key alone identifies the Simply.com account, see the [Simply.com API documentation](https://www.simply.com/en/docs/api/). The `account_name` option, and the `<account_name> <api_key>` form, are still accepted so existing configurations keep working, but the account name is no longer needed.
